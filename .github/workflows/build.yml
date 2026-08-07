@@ -1,0 +1,74 @@
+name: Build and publish
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      # Tagged releases publish an immutable version tag alongside the rolling ones.
+      - 'v*'
+  schedule:
+    # Weekly rebuild. Nothing in this repository needs to change for the image to
+    # need rebuilding: the point is to pick up Debian security updates to
+    # corosync-qnetd, openssh-server and the trixie base itself.
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: cloudsprocket/corosync-qnetd
+
+jobs:
+  build:
+    name: Build and push multi-arch image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up QEMU
+        # Provides the emulation that lets the arm64 image build on an amd64 runner.
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        # Both values are repository secrets. Nothing credential shaped belongs in
+        # this file or anywhere else in the repository.
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Derive image tags
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          # "latest" and "trixie" both track the current build. "trixie" is the
+          # more honest one to pin to, because it says which Debian release the
+          # image is built on, and that is what has to stay aligned with the
+          # Proxmox nodes. On a tag push the git tag is published as well, so a
+          # known good build can be pinned exactly.
+          tags: |
+            type=raw,value=latest
+            type=raw,value=trixie
+            type=ref,event=tag
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          # amd64 covers the Unraid host. arm64 makes a Raspberry Pi usable as the
+          # QDevice host, which is a common way to keep the arbitrator on separate
+          # hardware from the cluster.
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
