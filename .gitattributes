@@ -1,0 +1,6 @@
+# The entrypoint runs inside a Linux container, so it must keep LF endings even
+# when the repository is cloned or edited on Windows. A CRLF shebang line fails
+# with a bare "not found" that gives no hint as to the real cause.
+* text=auto eol=lf
+*.sh text eol=lf
+Dockerfile text eol=lf

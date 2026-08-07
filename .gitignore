@@ -1,0 +1,27 @@
+# Never commit anything from a live QDevice deployment. The nssdb directory holds
+# the CA private key and every signed node certificate.
+nssdb/
+*.db
+*.crt
+*.key
+*.crq
+*.pem
+authorized_keys
+id_*
+!id_*.md
+
+# Local scratch and working notes
+.local/
+*.log
+.env
+.env.*
+docker-compose.override.yml
+
+# Editors and operating system noise
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
