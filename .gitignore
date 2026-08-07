@@ -10,7 +10,8 @@ authorized_keys
 id_*
 !id_*.md
 
-# Local scratch
+# Local scratch and working notes
+.local/
 *.log
 .env
 .env.*
