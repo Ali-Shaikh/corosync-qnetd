@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="field" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07203a"/>
+      <stop offset="55%" stop-color="#0a3f73"/>
+      <stop offset="100%" stop-color="#0a63b8"/>
+    </linearGradient>
+
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="60%" stop-color="#ffbd2e" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#ffbd2e" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#04121f" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Field -->
+  <rect x="0" y="0" width="256" height="256" rx="52" fill="url(#field)"/>
+
+  <!-- Faint texture, kept well behind the motif -->
+  <g fill="#7fc4ff" opacity="0.06">
+    <circle cx="40" cy="40" r="2.5"/><circle cx="72" cy="40" r="2.5"/><circle cx="104" cy="40" r="2.5"/>
+    <circle cx="40" cy="72" r="2.5"/><circle cx="72" cy="72" r="2.5"/>
+    <circle cx="216" cy="216" r="2.5"/><circle cx="184" cy="216" r="2.5"/><circle cx="216" cy="184" r="2.5"/>
+  </g>
+
+  <!-- Quorum links. The two node-to-arbitrator links are the votes being granted. -->
+  <g stroke-linecap="round" fill="none">
+    <!-- node to node -->
+    <path d="M 78 180 L 178 180" stroke="#7fc4ff" stroke-width="8" opacity="0.55"/>
+    <!-- arbitrator to each node -->
+    <path d="M 120 100 L 84 158" stroke="#ffbd2e" stroke-width="8" opacity="0.9"/>
+    <path d="M 136 100 L 172 158" stroke="#ffbd2e" stroke-width="8" opacity="0.9"/>
+  </g>
+
+  <!-- Cluster nodes -->
+  <g filter="url(#lift)">
+    <circle cx="78" cy="180" r="25" fill="#7fc4ff"/>
+    <circle cx="178" cy="180" r="25" fill="#7fc4ff"/>
+  </g>
+
+  <!-- The arbitrator: the third vote, sitting outside the cluster -->
+  <circle cx="128" cy="80" r="52" fill="url(#halo)"/>
+  <g filter="url(#lift)">
+    <circle cx="128" cy="80" r="30" fill="#ffbd2e"/>
+    <circle cx="128" cy="80" r="30" fill="none" stroke="#07203a" stroke-width="4" opacity="0.35"/>
+  </g>
+</svg>

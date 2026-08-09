@@ -315,8 +315,9 @@ Save as `/boot/config/plugins/dockerMan/templates-user/my-corosync-qnetd.xml`.
 </Container>
 ```
 
-The template references an `icon.png` that this repository does not ship. Either
-add one or drop the `<Icon>` line.
+The icon the template points at is [`icon.png`](icon.png) in this repository, so
+the `<Icon>` line works as written. [`icon.svg`](icon.svg) is the editable
+source if you would rather use your own.
 
 ## Setting up the Proxmox side
 
