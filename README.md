@@ -214,15 +214,31 @@ into `/etc/pve/corosync.conf`.
 
 ### Leave custom networks on ipvlan
 
-Unraid defaults custom Docker networks to **ipvlan**, and that default is the one
-you want. Switching to **macvlan** while the parent interface is a bridge such as
-`br0` produces kernel call traces and hard lockups on Unraid. The symptom is a
-server that freezes after hours or days, with traces mentioning `macvlan` in the
-syslog, which is a miserable thing to debug from a stopped cluster.
+Unraid has shipped **ipvlan** as the custom Docker network type since 6.11.5, and
+it is the right setting for this container. The Unraid release notes give the
+reason plainly: "macvlan used for custom Docker networks is unreliable when the
+parent interface is a bridge (like br0), it works best on a physical interface
+(like eth0) or a bond (like bond0)". Switching to macvlan while `br0` is the
+parent is the documented route to kernel call traces.
 
-Check under **Settings, Docker** that the custom network type is `ipvlan` before
-creating the container. If you have previously switched to macvlan for another
-container, switch back.
+Check under **Settings, Docker**, advanced view, that the custom network type is
+`ipvlan` before creating the container.
+
+From 6.12.4 there is a third option, better than either if you are willing to
+change your network layout. Disabling bridging on eth0 makes Unraid build a
+macvtap network parented on eth0 rather than br0, which is how it avoids the call
+traces while still giving every container its own MAC address. Once bridging is
+off, the custom network type is set to macvlan and hidden, unless some other
+interface still has bridging enabled.
+
+Own MAC addresses are the thing ipvlan gives up, since it shares the host's, and
+Unraid records reports of "issues with port forwarding from certain routers
+(Fritzbox) and reduced functionality with advanced network management tools
+(Ubiquity) when in ipvlan mode". Neither affects a QDevice, which only needs the
+Proxmox nodes to reach two TCP ports on the LAN, so ipvlan is the low-effort
+correct answer here even where you would choose differently for other containers.
+
+Source: [Unraid 6.12.4 release notes](https://docs.unraid.net/unraid-os/release-notes/6.12.4/).
 
 ### Keep appdata on the cache pool
 
