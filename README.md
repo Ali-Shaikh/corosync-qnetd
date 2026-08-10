@@ -214,29 +214,10 @@ into `/etc/pve/corosync.conf`.
 
 ### Leave custom networks on ipvlan
 
-Unraid has shipped **ipvlan** as the custom Docker network type since 6.11.5, and
-it is the right setting for this container. The Unraid release notes give the
-reason plainly: "macvlan used for custom Docker networks is unreliable when the
-parent interface is a bridge (like br0), it works best on a physical interface
-(like eth0) or a bond (like bond0)". Switching to macvlan while `br0` is the
-parent is the documented route to kernel call traces.
-
-Check under **Settings, Docker**, advanced view, that the custom network type is
-`ipvlan` before creating the container.
-
-From 6.12.4 there is a third option, better than either if you are willing to
-change your network layout. Disabling bridging on eth0 makes Unraid build a
-macvtap network parented on eth0 rather than br0, which is how it avoids the call
-traces while still giving every container its own MAC address. Once bridging is
-off, the custom network type is set to macvlan and hidden, unless some other
-interface still has bridging enabled.
-
-Own MAC addresses are the thing ipvlan gives up, since it shares the host's, and
-Unraid records reports of "issues with port forwarding from certain routers
-(Fritzbox) and reduced functionality with advanced network management tools
-(Ubiquity) when in ipvlan mode". Neither affects a QDevice, which only needs the
-Proxmox nodes to reach two TCP ports on the LAN, so ipvlan is the low-effort
-correct answer here even where you would choose differently for other containers.
+Leave the custom Docker network type on **ipvlan**, the Unraid default. The
+macvlan alternative is unreliable when the parent interface is a bridge such as
+`br0`, which is the usual Unraid arrangement, so the default is the one you want
+and there is nothing to change.
 
 Source: [Unraid 6.12.4 release notes](https://docs.unraid.net/unraid-os/release-notes/6.12.4/).
 
