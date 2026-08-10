@@ -214,15 +214,12 @@ into `/etc/pve/corosync.conf`.
 
 ### Leave custom networks on ipvlan
 
-Unraid defaults custom Docker networks to **ipvlan**, and that default is the one
-you want. Switching to **macvlan** while the parent interface is a bridge such as
-`br0` produces kernel call traces and hard lockups on Unraid. The symptom is a
-server that freezes after hours or days, with traces mentioning `macvlan` in the
-syslog, which is a miserable thing to debug from a stopped cluster.
+Leave the custom Docker network type on **ipvlan**, the Unraid default. The
+macvlan alternative is unreliable when the parent interface is a bridge such as
+`br0`, which is the usual Unraid arrangement, so the default is the one you want
+and there is nothing to change.
 
-Check under **Settings, Docker** that the custom network type is `ipvlan` before
-creating the container. If you have previously switched to macvlan for another
-container, switch back.
+Source: [Unraid 6.12.4 release notes](https://docs.unraid.net/unraid-os/release-notes/6.12.4/).
 
 ### Keep appdata on the cache pool
 
